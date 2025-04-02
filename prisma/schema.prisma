@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+model Usuario {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  email           String   @unique
+  senha           String
+  data_nascimento DateTime
+  status          Int      @default(1) // 0 = inativo, 1 = ativo
+  apelido         String? // Opcional
+  tipo_usuario    String   @default("comum") // Valores possíveis: "comum", "admin", etc.
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relacionamentos
+  avaliacoes Avaliacao[] // Relacionamento com Avaliacao
+}
+
+model Filme {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  diretor        String
+  anoLancamento  Int
+  duracao        Int      // Duração em minutos
+  produtora      String
+  classificacao  String
+  poster         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relacionamentos
+  avaliacoes     Avaliacao[] // Relacionamento com Avaliacao
+  generos        GeneroFilme[] // Relacionamento com a tabela intermediária GeneroFilme
+}
+
+model Genero {
+  id          Int           @id @default(autoincrement())
+  descricao   String        // Descrição do gênero (não opcional)
+
+  // Relacionamentos
+  filmes      GeneroFilme[] // Relacionamento com a tabela intermediária GeneroFilme
+}
+
+model GeneroFilme {
+  id        Int     @id @default(autoincrement())
+  idGenero  Int
+  idFilme   Int
+
+  // Relacionamentos
+  genero    Genero  @relation(fields: [idGenero], references: [id])
+  filme     Filme   @relation(fields: [idFilme], references: [id])
+
+  @@index([idGenero])
+  @@index([idFilme])
+  @@unique([idGenero, idFilme]) // Garante que não haja duplicidade na relação
+}
+
+model Avaliacao {
+  id         Int     @id @default(autoincrement())
+  idUsuario  Int
+  idFilme    Int
+  nota       Float // Aceita notas quebradas, como 8.7
+  comentario String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  usuario Usuario @relation(fields: [idUsuario], references: [id])
+  filme   Filme   @relation(fields: [idFilme], references: [id])
+
+  @@index([idUsuario])
+  @@index([idFilme])
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
