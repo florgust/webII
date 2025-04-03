@@ -30,6 +30,41 @@ components:
         tipo_usuario:
           type: string
           description: Tipo do usuário (ex.: admin, comum)
+    Filme:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID do filme
+        nome:
+          type: string
+          description: Nome do filme
+        diretor:
+          type: string
+          description: Diretor do filme
+        anoLancamento:
+          type: integer
+          description: Ano de lançamento do filme
+        duracao:
+          type: integer
+          description: Duração do filme em minutos
+        produtora:
+          type: string
+          description: Produtora do filme
+        classificacao:
+          type: string
+          description: Classificação indicativa do filme
+        poster:
+          type: string
+          description: URL do pôster do filme
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do registro
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data da última atualização do registro
     ErrorResponse:
       type: object
       properties:
@@ -39,6 +74,8 @@ components:
 paths:
   /usuarios:
     get:
+      tags:
+        - Usuarios
       summary: Busca todos os usuários ativados
       description: Busca todos os usuários em que o status é igual 1, ou seja, usuários ativados
       responses:
@@ -77,6 +114,8 @@ paths:
           description: Erro interno do servidor
   /usuario/{id}:
     get:
+      tags:
+        - Usuarios
       summary: Busca um usuário pelo ID
       description: Retorna os dados de um usuário específico com base no ID fornecido.
       parameters:
@@ -106,6 +145,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     put:
+      tags:
+        - Usuarios
       summary: Atualiza os dados de um usuário
       description: Atualiza os dados de um usuário específico com base no ID fornecido.
       parameters:
@@ -156,6 +197,8 @@ paths:
           description: Erro interno do servidor
   /usuario:
     post:
+      tags:
+        - Usuarios
       summary: Cria um novo usuário
       description: Adiciona um novo usuário ao sistema com base nas informações fornecidas.
       requestBody:
@@ -194,6 +237,8 @@ paths:
           description: Erro na requisição
   /usuario/{id}/delete:
     put:
+      tags:
+        - Usuarios
       summary: Realiza o delete lógico de um usuário
       description: Atualiza o status do usuário para 0 (inativo), indicando um delete lógico.
       parameters:
@@ -208,5 +253,127 @@ paths:
           description: Usuário deletado logicamente com sucesso
         404:
           description: Usuário não encontrado
+        500:
+          description: Erro interno do servidor
+  /filmes:
+    get:
+      tags:
+        - Filme
+      summary: Busca todos os filmes
+      description: Retorna uma lista de todos os filmes cadastrados
+      responses:
+        200:
+          description: Lista de filmes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Filme'
+        500:
+          description: Erro interno do servidor
+  /filme/{id}:
+    get:
+      tags:
+        - Filme
+      summary: Busca um filme pelo ID
+      description: Retorna os dados de um filme específico com base no ID fornecido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme a ser buscado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Dados do filme retornados com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        404:
+          description: Filme não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+    put:
+      tags:
+        - Filme
+      summary: Atualiza os dados de um filme
+      description: Atualiza os dados de um filme específico com base no ID fornecido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme a ser atualizado
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filme'
+      responses:
+        200:
+          description: Filme atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        400:
+          description: Erro na requisição
+        404:
+          description: Filme não encontrado
+        500:
+          description: Erro interno do servidor
+    delete:
+      tags:
+        - Filme
+      summary: Deleta um filme
+      description: Remove um filme específico com base no ID fornecido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme a ser deletado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Filme deletado com sucesso
+        404:
+          description: Filme não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+  /filme:
+    post:
+      tags:
+        - Filme
+      summary: Cria um novo filme
+      description: Adiciona um novo filme ao sistema com base nas informações fornecidas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filme'
+      responses:
+        201:
+          description: Filme criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        400:
+          description: Erro na requisição
         500:
           description: Erro interno do servidor
