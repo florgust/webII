@@ -1,55 +1,51 @@
-const { Request, Response } = require('express')
 const { UsuarioService } = require('../service/usuario')
 
-const getUsuarios = async (req, res) => {
+const getUsuarios = async (req, res, next) => {
     try {
         const usuarios = await UsuarioService.getUsuarios();
         res.json(usuarios);
     } catch (error) {
-        res.status(500).json({ error: error });
+        next(error); // Encaminha o erro para o middleware de erros
     }
 }
 
-const getUsuarioById = async (req, res) => {
+const getUsuarioById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const usuario = await UsuarioService.getUsuarioById(id);
-        if (!usuario) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
-        }
         res.json(usuario);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar usuário.' });
+        next(error); // Encaminha o erro para o middleware de erros
     }
 };
 
-const createUsuario = async (req, res) => {
+const createUsuario = async (req, res, next) => {
     try {
         const novoUsuario = await UsuarioService.createUsuario(req.body);
         res.status(201).json(novoUsuario);
     } catch (error) {
-        res.status(400).json({ error: 'Erro ao criar usuário.' });
+        next(error); // Encaminha o erro para o middleware de erros
     }
-}
+};
 
-const updateUsuario = async (req, res) => {
+const updateUsuario = async (req, res, next) => {
     try {
         const { id } = req.params;
         const updatedUsuario = await UsuarioService.updateUsuario(id, req.body);
         res.json(updatedUsuario);
     } catch (error) {
-        res.status(400).json({ error: 'Erro ao atualizar usuário.' });
+        next(error); // Encaminha o erro para o middleware de erros
     }
 };
 
 // delete logico
-const softDeleteUsuario = async (req, res) => {
+const softDeleteUsuario = async (req, res, next) => {
     try {
         const { id } = req.params;
         const updatedUsuario = await UsuarioService.softDeleteUsuario(id);
         res.json(updatedUsuario);
     } catch (error) {
-        res.status(400).json({ error: 'Erro ao atualizar usuário.' });
+        next(error); // Encaminha o erro para o middleware de erros
     }
 };
 
