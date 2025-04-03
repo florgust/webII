@@ -1,12 +1,16 @@
 const prisma = require('../../prisma/prismaClient');
+const NotFoundError = require('../exceptions/NotFoundError')
 
 class UsuarioService {
 
     static async getUsuarios() {
+        console.log('Executando getUsuarios');
         try {
-            return await prisma.usuario.findMany({
-                where: {status: 1}
+            const usuarios = await prisma.usuario.findMany({
+                where: { status: 1 }
             });
+            console.log('Resultado de getUsuarios:', usuarios);
+            return usuarios;
         } catch (error) {
             console.error(`Erro ao buscar usuários: ${error}`);
             throw error;
@@ -14,10 +18,19 @@ class UsuarioService {
     }
 
     static async getUsuarioById(id) {
+        console.log('Executando getUsuarioById com ID:', id);
         try {
-            return await prisma.usuario.findUnique({
+            const usuario = await prisma.usuario.findUnique({
                 where: { id: parseInt(id) }
             });
+
+            if (!usuario) {
+                console.error('Usuário não encontrado.');
+                throw new NotFoundError('Usuário não encontrado.');
+            }
+
+            console.log('Resultado de getUsuarioById:', usuario);
+            return usuario;
         } catch (error) {
             console.error(`Erro ao buscar usuário por ID: ${error}`);
             throw error;
@@ -25,6 +38,7 @@ class UsuarioService {
     }
 
     static async createUsuario(data) {
+        console.log('Executando createUsuario com dados:', data);
         try {
             const novoUsuario = await prisma.usuario.create({
                 data: {
@@ -37,32 +51,35 @@ class UsuarioService {
                     tipo_usuario: data.tipo_usuario || 'comum',
                 }
             });
-            return novoUsuario
+            console.log('Usuário criado com sucesso:', novoUsuario);
+            return novoUsuario;
         } catch (error) {
-            console.log(`error: ${error}`);
+            console.error(`Erro ao criar usuário: ${error}`);
             throw error;
         }
     }
 
     static async updateUsuario(id, data) {
+        console.log('Executando updateUsuario com ID:', id, 'e dados:', data);
         try {
-            // Verificar se o usuário existe
             const usuario = await prisma.usuario.findUnique({
                 where: { id: parseInt(id) },
             });
 
             if (!usuario) {
-                throw new Error('Usuário não encontrado.');
+                console.error('Usuário não encontrado.');
+                throw new NotFoundError('Usuário não encontrado.');
             }
 
-            // Atualizar os campos fornecidos
-            return await prisma.usuario.update({
+            const usuarioAtualizado = await prisma.usuario.update({
                 where: { id: parseInt(id) },
                 data: {
                     ...data,
                     updatedAt: new Date(), // Atualiza a data de modificação
                 },
             });
+            console.log('Usuário atualizado com sucesso:', usuarioAtualizado);
+            return usuarioAtualizado;
         } catch (error) {
             console.error(`Erro ao atualizar usuário: ${error}`);
             throw error;
@@ -70,18 +87,18 @@ class UsuarioService {
     }
 
     static async softDeleteUsuario(id) {
+        console.log('Executando softDeleteUsuario com ID:', id);
         try {
-            // Verificar se o usuário existe
             const usuario = await prisma.usuario.findUnique({
                 where: { id: parseInt(id) },
             });
 
             if (!usuario) {
-                throw new Error('Usuário não encontrado.');
+                console.error('Usuário não encontrado.');
+                throw new NotFoundError('Usuário não encontrado.');
             }
 
-            // Atualizar o status para 0 (delete lógico) usando operações atômicas
-            return await prisma.usuario.update({
+            const usuarioDeletado = await prisma.usuario.update({
                 where: { id: parseInt(id) },
                 data: {
                     status: {
@@ -90,6 +107,8 @@ class UsuarioService {
                     updatedAt: new Date(), // Atualiza a data de modificação
                 },
             });
+            console.log('Usuário deletado logicamente com sucesso:', usuarioDeletado);
+            return usuarioDeletado;
         } catch (error) {
             console.error(`Erro no delete lógico no usuário: ${error}`);
             throw error;
