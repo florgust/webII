@@ -101,9 +101,7 @@ class UsuarioService {
             const usuarioDeletado = await prisma.usuario.update({
                 where: { id: parseInt(id) },
                 data: {
-                    status: {
-                        set: 0, // Define o status como 0
-                    },
+                    status: 0, // Define o status como 0 (inativo)
                     updatedAt: new Date(), // Atualiza a data de modificação
                 },
             });
