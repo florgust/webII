@@ -57,6 +57,9 @@ components:
         poster:
           type: string
           description: URL do pôster do filme
+        status:
+          type: integer
+          description: Status do filme (1 para ativo, 0 para inativo)
         createdAt:
           type: string
           format: date-time
@@ -331,29 +334,6 @@ paths:
           description: Filme não encontrado
         500:
           description: Erro interno do servidor
-    delete:
-      tags:
-        - Filme
-      summary: Deleta um filme
-      description: Remove um filme específico com base no ID fornecido
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID do filme a ser deletado
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Filme deletado com sucesso
-        404:
-          description: Filme não encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        500:
-          description: Erro interno do servidor
   /filme:
     post:
       tags:
@@ -377,3 +357,23 @@ paths:
           description: Erro na requisição
         500:
           description: Erro interno do servidor
+  /filme/{id}/delete:
+      put:
+        tags:
+          - Filme
+        summary: Realiza o delete lógico de um filme
+        description: Atualiza o status do filme para 0 (inativo), indicando um delete lógico.
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: ID do filme a ser deletado logicamente
+            schema:
+              type: integer
+        responses:
+          200:
+            description: filme deletado logicamente com sucesso
+          404:
+            description: filme não encontrado
+          500:
+            description: Erro interno do servidor
