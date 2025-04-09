@@ -1,0 +1,65 @@
+const { FilmeService } = require('../service/filme');
+
+const getFilmes = async (req, res, next) => {
+    console.log('GET /filmes - Iniciando busca de todos os filmes');
+    try {
+        const filmes = await FilmeService.getFilmes();
+        console.log('GET /filmes - Filmes encontrados:', filmes);
+        res.json(filmes);
+    } catch (error) {
+        console.error('GET /filmes - Erro ao buscar filmes:', error);
+        next(error);
+    }
+};
+
+const getFilmeById = async (req, res, next) => {
+    const { id } = req.params;
+    console.log(`GET /filmes/${id} - Iniciando busca do filme com ID ${id}`);
+    try {
+        const filme = await FilmeService.getFilmeById(id);
+        console.log(`GET /filmes/${id} - Filme encontrado:`, filme);
+        res.json(filme);
+    } catch (error) {
+        console.error(`GET /filmes/${id} - Erro ao buscar filme:`, error);
+        next(error);
+    }
+};
+
+const createFilme = async (req, res, next) => {
+    console.log('POST /filmes - Dados recebidos para criação:', req.body);
+    try {
+        const novoFilme = await FilmeService.createFilme(req.body);
+        console.log('POST /filmes - Filme criado com sucesso:', novoFilme);
+        res.status(201).json(novoFilme);
+    } catch (error) {
+        console.error('POST /filmes - Erro ao criar filme:', error);
+        next(error);
+    }
+};
+
+const updateFilme = async (req, res, next) => {
+    const { id } = req.params;
+    console.log(`PUT /filmes/${id} - Dados recebidos para atualização:`, req.body);
+    try {
+        const filmeAtualizado = await FilmeService.updateFilme(id, req.body);
+        console.log(`PUT /filmes/${id} - Filme atualizado com sucesso:`, filmeAtualizado);
+        res.json(filmeAtualizado);
+    } catch (error) {
+        console.error(`PUT /filmes/${id} - Erro ao atualizar filme:`, error);
+        next(error);
+    }
+};
+
+const softDeleteFilme = async (req, res, next) => {
+    const { id } = req.params;
+    console.log(`SOFT DELETE /filmes/${id} - Iniciando exclusão lógica do filme com ID ${id}`);
+    try {
+        const filmeDeletado = await FilmeService.softDeleteFilme(id);
+        console.log(`SOFT DELETE /filmes/${id} - Filme excluído logicamente com sucesso:`, filmeDeletado);
+        res.json(filmeDeletado);
+    } catch (error) {
+        console.error(`SOFT DELETE /filmes/${id} - Erro ao excluir filme:`, error);
+        next(error);
+    }
+};
+module.exports = { getFilmes, getFilmeById, createFilme, updateFilme, softDeleteFilme };
