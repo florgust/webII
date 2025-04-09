@@ -5,7 +5,9 @@ class FilmeService {
     static async getFilmes() {
         console.log('Executando getFilmes');
         try {
-            const filmes = await prisma.filme.findMany();
+            const filmes = await prisma.filme.findMany({
+                where: { status: 1 }
+            });
             return filmes;
         } catch (error) {
             console.error('Erro ao buscar filmes:', error);
@@ -67,7 +69,7 @@ class FilmeService {
         }
     }
 
-    static async deleteFilme(id) {
+    static async softDeleteFilme(id) {
         console.log('Executando deleteFilme com ID:', id);
         try {
             const filmeExistente = await prisma.filme.findUnique({
@@ -75,13 +77,18 @@ class FilmeService {
             });
 
             if (!filmeExistente) {
+                console.error('Filme não encontrado.')
                 throw new NotFoundError('Filme não encontrado.');
             }
 
-            const filmeDeletado = await prisma.filme.delete({
+            const filmeDeletado = await prisma.filme.update({
                 where: { id: parseInt(id) },
+                data: {
+                    status: 0,
+                    updatedAt: new Date(),
+                },
             });
-
+            console.log('Filme deletado logicamente com sucesso: ', filmeDeletado);
             return filmeDeletado;
         } catch (error) {
             console.error(`Erro ao deletar filme com ID ${id}:`, error);
