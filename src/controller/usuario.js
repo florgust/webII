@@ -1,4 +1,6 @@
 const { UsuarioService } = require('../service/usuario')
+const { UsuarioSchema } = require('../validation/usuarioValidation')
+const { UsuarioUpdateSchema } = require('../validation/usuarioValidation')
 
 const getUsuarios = async (req, res, next) => {
     console.log('GET /usuarios - Iniciando busca de todos os usuários');
@@ -30,7 +32,8 @@ const getUsuarioById = async (req, res, next) => {
 const createUsuario = async (req, res, next) => {
     console.log('POST /usuarios - Dados recebidos para criação:', req.body);
     try {
-        const novoUsuario = await UsuarioService.createUsuario(req.body);
+        const validetData = UsuarioSchema.parse(req.body)
+        const novoUsuario = await UsuarioService.createUsuario(validetData);
         console.log('POST /usuarios - Usuário criado com sucesso:', novoUsuario);
         res.status(201).json(novoUsuario);
     } catch (error) {
@@ -43,7 +46,8 @@ const updateUsuario = async (req, res, next) => {
     const { id } = req.params;
     console.log(`PUT /usuarios/${id} - Dados recebidos para atualização:`, req.body);
     try {
-        const updatedUsuario = await UsuarioService.updateUsuario(id, req.body);
+        const validetData = UsuarioUpdateSchema.parse(req.body)
+        const updatedUsuario = await UsuarioService.updateUsuario(validetData);
         console.log(`PUT /usuarios/${id} - Usuário atualizado com sucesso:`, updatedUsuario);
         res.json(updatedUsuario);
     } catch (error) {
