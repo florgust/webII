@@ -5,3 +5,5 @@ class BadRequestError extends Error {
         this.statusCode = 400; // Código de status HTTP para "Bad Request"
     }
 }
+
+module.exports = BadRequestError;
