@@ -1,4 +1,5 @@
 const { FilmeService } = require('../service/filme');
+const { FilmeSchema } = require('../validation/filmeValidation')
 
 const getFilmes = async (req, res, next) => {
     console.log('GET /filmes - Iniciando busca de todos os filmes');
@@ -28,7 +29,8 @@ const getFilmeById = async (req, res, next) => {
 const createFilme = async (req, res, next) => {
     console.log('POST /filmes - Dados recebidos para criação:', req.body);
     try {
-        const novoFilme = await FilmeService.createFilme(req.body);
+        const validetData = FilmeSchema.parse(req.body)
+        const novoFilme = await FilmeService.createFilme(validetData);
         console.log('POST /filmes - Filme criado com sucesso:', novoFilme);
         res.status(201).json(novoFilme);
     } catch (error) {
@@ -41,7 +43,8 @@ const updateFilme = async (req, res, next) => {
     const { id } = req.params;
     console.log(`PUT /filmes/${id} - Dados recebidos para atualização:`, req.body);
     try {
-        const filmeAtualizado = await FilmeService.updateFilme(id, req.body);
+        const validetData = FilmeSchema.parse(req.body)
+        const filmeAtualizado = await FilmeService.updateFilme(id, validetData);
         console.log(`PUT /filmes/${id} - Filme atualizado com sucesso:`, filmeAtualizado);
         res.json(filmeAtualizado);
     } catch (error) {
