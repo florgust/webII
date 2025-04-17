@@ -68,6 +68,35 @@ components:
           type: string
           format: date-time
           description: Data da última atualização do registro
+    Avaliacao:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID da avaliação
+        idUsuario:
+          type: integer
+          description: ID do usuário que realizou a avaliação
+        idFilme:
+          type: integer
+          description: ID do filme avaliado
+        nota:
+          type: number
+          description: Nota da avaliação (0 a 10)
+        comentario:
+          type: string
+          description: Comentário sobre o filme
+        status:
+          type: integer
+          description: Status da avaliação (1 para ativo, 0 para inativo)
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação da avaliação
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data da última atualização da avaliação
     ErrorResponse:
       type: object
       properties:
@@ -258,6 +287,7 @@ paths:
           description: Usuário não encontrado
         500:
           description: Erro interno do servidor
+  
   /filmes:
     get:
       tags:
@@ -377,3 +407,210 @@ paths:
             description: filme não encontrado
           500:
             description: Erro interno do servidor
+  
+  /avaliacoes/filme/{id}:
+    get:
+      tags:
+        - Avaliacoes
+      summary: Busca avaliações por filme
+      description: Retorna todas as avaliações ativas de um filme específico com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme a ser buscado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de avaliações retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Avaliacao'
+        404:
+          description: Nenhuma avaliação encontrada para o filme
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /avaliacoes/usuario/{id}:
+    get:
+      tags:
+        - Avaliacoes
+      summary: Busca avaliações por usuário
+      description: Retorna todas as avaliações ativas de um usuário específico com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do usuário a ser buscado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de avaliações retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Avaliacao'
+        404:
+          description: Nenhuma avaliação encontrada para o usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /avaliacao:
+    post:
+      tags:
+        - Avaliacoes
+      summary: Cria uma nova avaliação
+      description: Adiciona uma nova avaliação ao sistema com base nas informações fornecidas.
+      parameters:
+        - name: idusuario
+          in: header
+          required: true
+          description: ID do usuário que está criando a avaliação
+          schema:
+            type: integer
+        - name: idfilme
+          in: header
+          required: true
+          description: ID do filme que está sendo avaliado
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nota:
+                  type: number
+                  description: Nota da avaliação (0 a 10)
+                comentario:
+                  type: string
+                  description: Comentário sobre o filme
+              required:
+                - nota
+      responses:
+        201:
+          description: Avaliação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avaliacao'
+        400:
+          description: Erro na requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /avaliacao/{id}:
+    put:
+      tags:
+        - Avaliacoes
+      summary: Atualiza uma avaliação
+      description: Atualiza os dados de uma avaliação específica com base no ID fornecido.
+      parameters:
+        - name: idusuario
+          in: header
+          required: true
+          description: ID do usuário que está criando a avaliação
+          schema:
+            type: integer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da avaliação a ser atualizada
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nota:
+                  type: number
+                  description: Nota da avaliação (0 a 10)
+                comentario:
+                  type: string
+                  description: Comentário sobre o filme
+              required: []
+      responses:
+        200:
+          description: Avaliação atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avaliacao'
+        404:
+          description: Avaliação não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /avaliacao/{id}/delete:
+    put:
+      tags:
+        - Avaliacoes
+      summary: Realiza o delete lógico de uma avaliação
+      description: Atualiza o status da avaliação para 0 (inativo), indicando um delete lógico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da avaliação a ser deletada logicamente
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Avaliação deletada logicamente com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avaliacao'
+        404:
+          description: Avaliação não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

@@ -59,7 +59,10 @@ class FilmeService {
 
             const filmeAtualizado = await prisma.filme.update({
                 where: { id: parseInt(id) },
-                data,
+                data: {
+                    ...data,
+                    updatedAt: new Date(), // Atualiza a data de modificação
+                },
             });
 
             return filmeAtualizado;
