@@ -29,4 +29,6 @@ const FilmeSchema = z.object({
         .url({ message: 'O campo "poster" deve ser uma URL válida.' })
 });
 
-module.exports = { FilmeSchema };
+const FilmeUpdateSchema = FilmeSchema.partial();
+
+module.exports = { FilmeSchema, FilmeUpdateSchema };

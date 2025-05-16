@@ -1,5 +1,5 @@
 const { FilmeService } = require('../service/filme');
-const { FilmeSchema } = require('../validation/filmeValidation')
+const { FilmeSchema, FilmeUpdateSchema } = require('../validation/filmeValidation')
 
 const getFilmes = async (req, res, next) => {
     console.log('GET /filmes - Iniciando busca de todos os filmes');
@@ -43,7 +43,7 @@ const updateFilme = async (req, res, next) => {
     const { id } = req.params;
     console.log(`PUT /filmes/${id} - Dados recebidos para atualização:`, req.body);
     try {
-        const validetData = FilmeSchema.parse(req.body)
+        const validetData = FilmeUpdateSchema.parse(req.body)
         const filmeAtualizado = await FilmeService.updateFilme(id, validetData);
         console.log(`PUT /filmes/${id} - Filme atualizado com sucesso:`, filmeAtualizado);
         res.json(filmeAtualizado);
