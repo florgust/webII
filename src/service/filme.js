@@ -87,7 +87,7 @@ class FilmeService {
             const filmeDeletado = await prisma.filme.update({
                 where: { id: parseInt(id) },
                 data: {
-                    status: 0,
+                    status: filmeExistente.status === 1 ? 0 : 1,
                     updatedAt: new Date(),
                 },
             });

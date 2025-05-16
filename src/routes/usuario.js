@@ -8,5 +8,4 @@ router.post('/usuario', createUsuario);
 router.put('/usuario/:id', updateUsuario);
 router.put('/usuario/:id/delete', softDeleteUsuario);
 
-
 module.exports = router;

@@ -108,7 +108,7 @@ class AvaliacaoService {
             const avaliacaoInativada = await prisma.avaliacao.update({
                 where: { id },
                 data: {
-                    status: 0,
+                    status: avaliacaoExistente.status === 1 ? 0 : 1,
                     updatedAt: new Date(),
                 },
             });

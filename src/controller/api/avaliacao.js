@@ -63,13 +63,13 @@ const updateAvaliacao = async (req, res, next) => {
         IdSchema.parse({ id: idUsuario });
 
         // Validação do ID da avaliação
-        const { id } = IdSchema.parse({ id: Number(req.params.id) });
+        const { id: idAvaliacao } = IdSchema.parse({ id: Number(req.params.id) });
 
         // Validação dos dados de atualização
         const validData = AvaliacaoUpdateSchema.parse(req.body);
 
         // Atualiza a avaliação
-        const avaliacaoAtualizada = await AvaliacaoService.updateAvaliacao(idUsuario, id, validData);
+        const avaliacaoAtualizada = await AvaliacaoService.updateAvaliacao(idUsuario, idAvaliacao, validData);
         console.log(`PUT /api/avaliacao/:id - Avaliação atualizada com sucesso:`, avaliacaoAtualizada);
         res.json(avaliacaoAtualizada);
     } catch (error) {
@@ -86,8 +86,13 @@ const softDeleteAvaliacao = async (req, res, next) => {
 
         // Realiza o soft delete
         const avaliacaoInativada = await AvaliacaoService.softDeleteAvaliacao(id);
-        console.log(`DELETE /api/avaliacao/:id - Avaliação com ID ${id} inativada com sucesso:`, avaliacaoInativada);
-        res.json({ message: `Avaliação com ID ${id} foi inativada com sucesso.` });
+        if (avaliacaoInativada.status === 0) {
+            console.log(`DELETE /api/avaliacao/:id - Avaliação com ID ${id} inativada com sucesso:`, avaliacaoInativada);
+            res.json({ message: `Avaliação com ID ${id} foi inativada com sucesso.` });
+        } else {
+            console.log(`DELETE /api/avaliacao/:id - Avaliação com ID ${id} foi reativada com sucesso.`);
+            res.json({ message: `Avaliação com ID ${id} foi reativada com sucesso.` });
+        }
     } catch (error) {
         console.error('DELETE /api/avaliacao/:id - Erro ao inativar avaliação:', error);
         next(error); // Encaminha o erro para o middleware de erros

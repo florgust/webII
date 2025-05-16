@@ -44,14 +44,14 @@ const createUsuario = async (req, res, next) => {
 
 const updateUsuario = async (req, res, next) => {
     const { id } = req.params;
-    console.log(`PUT /usuarios/${id} - Dados recebidos para atualização:`, req.body);
+    console.log(`PUT /usuario/${id} - Dados recebidos para atualização:`, req.body);
     try {
         const validetData = UsuarioUpdateSchema.parse(req.body)
-        const updatedUsuario = await UsuarioService.updateUsuario(validetData);
-        console.log(`PUT /usuarios/${id} - Usuário atualizado com sucesso:`, updatedUsuario);
+        const updatedUsuario = await UsuarioService.updateUsuario(id, validetData);
+        console.log(`PUT /usuario/${id} - Usuário atualizado com sucesso:`, updatedUsuario);
         res.json(updatedUsuario);
     } catch (error) {
-        console.error(`PUT /usuarios/${id} - Erro ao atualizar usuário:`, error);
+        console.error(`PUT /usuario/${id} - Erro ao atualizar usuário:`, error);
         next(error); // Encaminha o erro para o middleware de erros
     }
 };
