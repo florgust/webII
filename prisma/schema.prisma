@@ -56,6 +56,11 @@ model GeneroFilme {
   idGenero  Int
   idFilme   Int
 
+  status         Int      @default(1) // 0 = inativo, 1 = ativo
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
   // Relacionamentos
   genero    Genero  @relation(fields: [idGenero], references: [id])
   filme     Filme   @relation(fields: [idFilme], references: [id])
