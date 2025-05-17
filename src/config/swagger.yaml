@@ -97,6 +97,26 @@ components:
           type: string
           format: date-time
           description: Data da última atualização da avaliação
+    Genero:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID do gênero
+        descricao:
+          type: string
+          description: Descrição do gênero
+        status:
+          type: integer
+          description: Status do gênero (1 para ativo, 0 para inativo)
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do registro
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data da última atualização do registro
     ErrorResponse:
       type: object
       properties:
@@ -614,3 +634,333 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /generos:
+    get:
+      tags:
+        - Genero
+      summary: Busca todos os gêneros
+      description: Retorna uma lista de todos os gêneros cadastrados
+      responses:
+        200:
+          description: Lista de gêneros retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genero'
+        500:
+          description: Erro interno do servidor
+  /genero/{id}:
+    get:
+      tags:
+        - Genero
+      summary: Busca um gênero pelo ID
+      description: Retorna os dados de um gênero específico com base no ID fornecido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do gênero a ser buscado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Dados do gênero retornados com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+        404:
+          description: Gênero não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+
+    put:
+      tags:
+        - Genero
+      summary: Atualiza os dados de um gênero
+      description: Atualiza os dados de um gênero específico com base no ID fornecido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do gênero a ser atualizado
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+      responses:
+        200:
+          description: Gênero atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+        400:
+          description: Erro na requisição
+        404:
+          description: Gênero não encontrado
+        500:
+          description: Erro interno do servidor
+  /genero:
+    post:
+      tags:
+        - Genero
+      summary: Cria um novo gênero
+      description: Adiciona um novo gênero ao sistema com base nas informações fornecidas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+      responses:
+        201:
+          description: Gênero criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+        400:
+          description: Erro na requisição
+        500:
+          description: Erro interno do servidor
+  /genero/{id}/delete:
+    put:
+      tags:
+        - Genero
+      summary: Realiza o delete lógico de um gênero
+      description: Atualiza o status do gênero para 0 (inativo), indicando um delete lógico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do gênero a ser deletado logicamente
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Gênero deletado logicamente com sucesso
+        404:
+          description: Gênero não encontrado
+        500:
+          description: Erro interno do servidor
+
+  /genero_filme/filmes/{id}:
+    get:
+      tags:
+        - GeneroFilme
+      summary: Busca todos os filmes de um gênero específico
+      description: Retorna uma lista de filmes ativos associados ao gênero informado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do gênero
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de filmes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Filme'
+        404:
+          description: Nenhum filme encontrado para o gênero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+  /genero_filme/generos/{id}:
+    get:
+      tags:
+        - GeneroFilme
+      summary: Busca todos os gêneros de um filme específico
+      description: Retorna uma lista de gêneros ativos associados ao filme informado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de gêneros retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: ID do gênero
+                    descricao:
+                      type: string
+                      description: Descrição do gênero
+        404:
+          description: Nenhum gênero encontrado para o filme
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+  /genero_filme:
+    post:
+      tags:
+        - GeneroFilme
+      summary: Associa um gênero a um filme
+      description: Cria uma nova associação entre um gênero e um filme.
+      parameters:
+        - name: idgenero
+          in: header
+          required: true
+          description: ID do gênero
+          schema:
+            type: integer
+        - name: idfilme
+          in: header
+          required: true
+          description: ID do filme
+          schema:
+            type: integer
+      responses:
+        201:
+          description: Associação criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  idGenero:
+                    type: integer
+                  idFilme:
+                    type: integer
+                  status:
+                    type: integer
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+        400:
+          description: Erro na requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+  /genero_filme/{id}:
+    put:
+      tags:
+        - GeneroFilme
+      summary: Atualiza a associação entre gênero e filme
+      description: Atualiza os dados de uma associação específica entre gênero e filme.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da associação genero_filme
+          schema:
+            type: integer
+        - name: idgenero
+          in: header
+          required: true
+          description: Novo ID do gênero
+          schema:
+            type: integer
+        - name: idfilme
+          in: header
+          required: true
+          description: Novo ID do filme
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Associação atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  idGenero:
+                    type: integer
+                  idFilme:
+                    type: integer
+                  status:
+                    type: integer
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+        400:
+          description: Erro na requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Associação não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+  /genero_filme/{id}/delete:
+    put:
+      tags:
+        - GeneroFilme
+      summary: Realiza o delete lógico da associação genero_filme
+      description: Atualiza o status da associação para 0 (inativo), indicando um delete lógico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da associação genero_filme a ser deletada logicamente
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Associação deletada logicamente com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: Associação não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor

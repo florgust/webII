@@ -42,6 +42,11 @@ model Genero {
   id          Int           @id @default(autoincrement())
   descricao   String        // Descrição do gênero (não opcional)
 
+  status         Int      @default(1) // 0 = inativo, 1 = ativo
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
   // Relacionamentos
   filmes      GeneroFilme[] // Relacionamento com a tabela intermediária GeneroFilme
 }
@@ -50,6 +55,11 @@ model GeneroFilme {
   id        Int     @id @default(autoincrement())
   idGenero  Int
   idFilme   Int
+
+  status         Int      @default(1) // 0 = inativo, 1 = ativo
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   // Relacionamentos
   genero    Genero  @relation(fields: [idGenero], references: [id])
