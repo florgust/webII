@@ -10,6 +10,7 @@ const filmeRouter = require('./src/routes/filme');
 const avaliacaoRouter = require('./src/routes/avaliacao')
 const generoRouter = require('./src/routes/genero');
 const GeneroFilmeRouter = require('./src/routes/genero_filme');
+const autenticacaoRouter = require('./src/routes/autenticacao');
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use('/', filmeRouter);
 app.use('/', avaliacaoRouter);
 app.use('/', generoRouter);
 app.use('/', GeneroFilmeRouter);
+app.use('/', autenticacaoRouter);
 
 app.use(errorHandler)
 // Iniciar o servidor
