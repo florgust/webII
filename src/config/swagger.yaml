@@ -3,7 +3,13 @@ info:
   title: API de Usuários
   version: 1.0.0
   description: Documentação da API de Usuários
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Usuario:
       type: object
@@ -123,12 +129,15 @@ components:
         error:
           type: string
           description: Mensagem de erro
+
 paths:
   /usuarios:
     get:
       tags:
         - Usuarios
       summary: Busca todos os usuários ativados
+      security:
+        - bearerAuth: []
       description: Busca todos os usuários em que o status é igual 1, ou seja, usuários ativados
       responses:
         200:
@@ -169,6 +178,8 @@ paths:
       tags:
         - Usuarios
       summary: Busca um usuário pelo ID
+      security:
+        - bearerAuth: []
       description: Retorna os dados de um usuário específico com base no ID fornecido.
       parameters:
         - name: id
@@ -200,6 +211,8 @@ paths:
       tags:
         - Usuarios
       summary: Atualiza os dados de um usuário
+      security:
+        - bearerAuth: []
       description: Atualiza os dados de um usuário específico com base no ID fornecido.
       parameters:
         - name: id
@@ -292,6 +305,8 @@ paths:
       tags:
         - Usuarios
       summary: Realiza o delete lógico de um usuário
+      security:
+        - bearerAuth: []
       description: Atualiza o status do usuário para 0 (inativo), indicando um delete lógico.
       parameters:
         - name: id
@@ -357,6 +372,8 @@ paths:
       tags:
         - Filme
       summary: Atualiza os dados de um filme
+      security:
+        - bearerAuth: []
       description: Atualiza os dados de um filme específico com base no ID fornecido
       parameters:
         - name: id
@@ -384,11 +401,41 @@ paths:
           description: Filme não encontrado
         500:
           description: Erro interno do servidor
+  /filmes/{nome}:
+    get:
+      tags:
+        - Filme
+      summary: Busca um filme pelo nome
+      description: Retorna os dados de um filme específico com base no nome fornecido
+      parameters:
+        - name: nome
+          in: path
+          required: true
+          description: Nome do filme a ser buscado
+          schema:
+            type: string
+      responses:
+        200:
+          description: Dados do filme retornados com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        404:
+          description: Filme não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
   /filme:
     post:
       tags:
         - Filme
       summary: Cria um novo filme
+      security:
+        - bearerAuth: []
       description: Adiciona um novo filme ao sistema com base nas informações fornecidas
       requestBody:
         required: true
@@ -412,6 +459,8 @@ paths:
         tags:
           - Filme
         summary: Realiza o delete lógico de um filme
+        security:
+          - bearerAuth: []
         description: Atualiza o status do filme para 0 (inativo), indicando um delete lógico.
         parameters:
           - name: id
@@ -554,6 +603,8 @@ paths:
       tags:
         - Avaliacoes
       summary: Atualiza uma avaliação
+      security:
+        - bearerAuth: []
       description: Atualiza os dados de uma avaliação específica com base no ID fornecido.
       parameters:
         - name: idusuario
@@ -607,6 +658,8 @@ paths:
       tags:
         - Avaliacoes
       summary: Realiza o delete lógico de uma avaliação
+      security:
+        - bearerAuth: []
       description: Atualiza o status da avaliação para 0 (inativo), indicando um delete lógico.
       parameters:
         - name: id
@@ -685,6 +738,8 @@ paths:
       tags:
         - Genero
       summary: Atualiza os dados de um gênero
+      security:
+        - bearerAuth: []
       description: Atualiza os dados de um gênero específico com base no ID fornecido
       parameters:
         - name: id
@@ -717,6 +772,8 @@ paths:
       tags:
         - Genero
       summary: Cria um novo gênero
+      security:
+        - bearerAuth: []
       description: Adiciona um novo gênero ao sistema com base nas informações fornecidas
       requestBody:
         required: true
@@ -740,6 +797,8 @@ paths:
       tags:
         - Genero
       summary: Realiza o delete lógico de um gênero
+      security:
+        - bearerAuth: []
       description: Atualiza o status do gênero para 0 (inativo), indicando um delete lógico.
       parameters:
         - name: id
@@ -828,6 +887,8 @@ paths:
       tags:
         - GeneroFilme
       summary: Associa um gênero a um filme
+      security:
+        - bearerAuth: []
       description: Cria uma nova associação entre um gênero e um filme.
       parameters:
         - name: idgenero
@@ -877,6 +938,8 @@ paths:
       tags:
         - GeneroFilme
       summary: Atualiza a associação entre gênero e filme
+      security:
+        - bearerAuth: []
       description: Atualiza os dados de uma associação específica entre gênero e filme.
       parameters:
         - name: id
@@ -938,6 +1001,8 @@ paths:
       tags:
         - GeneroFilme
       summary: Realiza o delete lógico da associação genero_filme
+      security:
+        - bearerAuth: []
       description: Atualiza o status da associação para 0 (inativo), indicando um delete lógico.
       parameters:
         - name: id
@@ -964,3 +1029,55 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         500:
           description: Erro interno do servidor
+
+  /autenticacao:
+    post:
+      tags:
+        - Autenticacao
+      summary: Realiza login do usuário
+      description: Autentica o usuário e retorna um token JWT para uso nas demais rotas protegidas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: usuario@email.com
+                  description: E-mail do usuário
+                senha:
+                  type: string
+                  example: senha123
+                  description: Senha do usuário
+              required:
+                - email
+                - senha
+      responses:
+        200:
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para autenticação
+        401:
+          description: Usuário ou senha inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  erro:
+                    type: string
+                    example: Usuário ou senha inválidos
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
