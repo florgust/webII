@@ -30,7 +30,10 @@ const getUsuarioById = async (req, res, next) => {
 
 
 const createUsuario = async (req, res, next) => {
-    console.log('POST /usuarios - Dados recebidos para criação:', req.body);
+    console.log('POST /usuarios - Dados recebidos para criação:', {
+        ...req.body,
+        senha: undefined
+    });
     try {
         const validetData = UsuarioSchema.parse(req.body)
         const novoUsuario = await UsuarioService.createUsuario(validetData);

@@ -1,5 +1,6 @@
 const prisma = require('../../prisma/prismaClient');
 const NotFoundError = require('../exceptions/NotFoundError')
+const bcrypt = require('bcrypt');
 
 class UsuarioService {
 
@@ -9,8 +10,9 @@ class UsuarioService {
             const usuarios = await prisma.usuario.findMany({
                 where: { status: 1 }
             });
-            console.log('Resultado de getUsuarios:', usuarios);
-            return usuarios;
+            // Remove a senha dos logs e do retorno
+            const usuariosSemSenha = usuarios.map(({ senha, ...rest }) => rest);
+            return usuariosSemSenha;
         } catch (error) {
             console.error(`Erro ao buscar usuários: ${error}`);
             throw error;
@@ -29,8 +31,9 @@ class UsuarioService {
                 throw new NotFoundError('Usuário não encontrado.');
             }
 
-            console.log('Resultado de getUsuarioById:', usuario);
-            return usuario;
+            // Remove a senha dos logs e do retorno
+            const { senha, ...usuarioSemSenha } = usuario;
+            return usuarioSemSenha;
         } catch (error) {
             console.error(`Erro ao buscar usuário por ID: ${error}`);
             throw error;
@@ -38,21 +41,25 @@ class UsuarioService {
     }
 
     static async createUsuario(data) {
-        console.log('Executando createUsuario com dados:', data);
+        // Nunca logar a senha!
+        const { senha, ...rest } = data;
+        console.log('Executando createUsuario com dados:', rest);
         try {
+            const senhaCriptografada = await bcrypt.hash(senha, 10);
             const novoUsuario = await prisma.usuario.create({
                 data: {
                     nome: data.nome,
                     email: data.email,
-                    senha: data.senha,
+                    senha: senhaCriptografada,
                     data_nascimento: new Date(data.data_nascimento),
-                    status: data.status || 1, // Valor padrão: 1 (ativo)
-                    apelido: data.apelido || null, // Valor padrão: null
+                    status: data.status || 1,
+                    apelido: data.apelido || null,
                     tipo_usuario: data.tipo_usuario || 'comum',
                 }
             });
-            console.log('Usuário criado com sucesso:', novoUsuario);
-            return novoUsuario;
+            // Remove a senha dos logs e do retorno
+            const { senha: _, ...usuarioSemSenha } = novoUsuario;
+            return usuarioSemSenha;
         } catch (error) {
             console.error(`Erro ao criar usuário: ${error}`);
             throw error;
@@ -60,7 +67,12 @@ class UsuarioService {
     }
 
     static async updateUsuario(id, data) {
-        console.log('Executando updateUsuario com ID:', id, 'e dados:', data);
+        // Nunca logar a senha!
+        const { senha, ...rest } = data;
+        if (rest.data_nascimento) {
+            rest.data_nascimento = new Date(rest.data_nascimento);
+        }
+        console.log('Executando updateUsuario com ID:', id, 'e dados:', rest);
         try {
             const usuario = await prisma.usuario.findUnique({
                 where: { id: parseInt(id) },
@@ -71,16 +83,22 @@ class UsuarioService {
                 throw new NotFoundError('Usuário não encontrado.');
             }
 
+            let updateData = {
+                ...rest,
+                updatedAt: new Date(),
+            };
+
+            if (senha) {
+                updateData.senha = await bcrypt.hash(senha, 10);
+            }
+
             const usuarioAtualizado = await prisma.usuario.update({
                 where: { id: parseInt(id) },
-                data: {
-                    ...data,
-                    data_nascimento: new Date(data.data_nascimento),
-                    updatedAt: new Date(), // Atualiza a data de modificação
-                },
+                data: updateData,
             });
-            console.log('Usuário atualizado com sucesso:', usuarioAtualizado);
-            return usuarioAtualizado;
+            // Remove a senha dos logs e do retorno
+            const { senha: _, ...usuarioSemSenha } = usuarioAtualizado;
+            return usuarioSemSenha;
         } catch (error) {
             console.error(`Erro ao atualizar usuário: ${error}`);
             throw error;
@@ -102,12 +120,13 @@ class UsuarioService {
             const usuarioDeletado = await prisma.usuario.update({
                 where: { id: parseInt(id) },
                 data: {
-                    status: usuario.status === 1 ? 0 : 1, // Define o status como 0 (inativo)
-                    updatedAt: new Date(), // Atualiza a data de modificação
+                    status: usuario.status === 1 ? 0 : 1,
+                    updatedAt: new Date(),
                 },
             });
-            console.log('Usuário deletado logicamente com sucesso:', usuarioDeletado);
-            return usuarioDeletado;
+            // Remove a senha dos logs e do retorno
+            const { senha, ...usuarioSemSenha } = usuarioDeletado;
+            return usuarioSemSenha;
         } catch (error) {
             console.error(`Erro no delete lógico no usuário: ${error}`);
             throw error;
@@ -115,4 +134,4 @@ class UsuarioService {
     }
 }
 
-module.exports = { UsuarioService }; 
+module.exports = { UsuarioService };
