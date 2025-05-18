@@ -26,6 +26,19 @@ const getFilmeById = async (req, res, next) => {
     }
 };
 
+const getFilmesByNome = async (req, res, next) => {
+    const { nome } = req.params;
+    console.log(`GET /filmes/buscar - Iniciando busca de filmes com nome: ${nome}`);
+    try {
+        const filmes = await FilmeService.getFilmesByNome(nome);
+        console.log(`GET /filmes/buscar - Filmes encontrados:`, filmes);
+        res.json(filmes);
+    } catch (error) {
+        console.error(`GET /filmes/buscar - Erro ao buscar filmes:`, error);
+        next(error);
+    }
+}
+
 const createFilme = async (req, res, next) => {
     console.log('POST /filmes - Dados recebidos para criação:', req.body);
     try {
@@ -65,4 +78,4 @@ const softDeleteFilme = async (req, res, next) => {
         next(error);
     }
 };
-module.exports = { getFilmes, getFilmeById, createFilme, updateFilme, softDeleteFilme };
+module.exports = { getFilmes, getFilmeById, getFilmesByNome, createFilme, updateFilme, softDeleteFilme };

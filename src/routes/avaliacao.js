@@ -6,14 +6,15 @@ const {
     updateAvaliacao,
     softDeleteAvaliacao
 } = require('../controller/api/avaliacao');
+const { autenticarUsuario, somenteProprioUsuarioOuAdmin } = require('../middleware/autenticacao');
 
 const router = express.Router();
 
 // Rotas para avaliações
-router.get('/avaliacoes/filme/:id', getAvaliacaoByFilme); // Busca avaliações por filme
-router.get('/avaliacoes/usuario/:id', getAvaliacaoByUsuario); // Busca avaliações por usuário
-router.post('/avaliacao', createAvaliacao); // Criação de uma nova avaliação
-router.put('/avaliacao/:id', updateAvaliacao); // Atualização de uma avaliação
-router.put('/avaliacao/:id/delete', softDeleteAvaliacao); // Soft delete de uma avaliação
+router.get('/avaliacoes/filme/:id', getAvaliacaoByFilme); // Público
+router.get('/avaliacoes/usuario/:id', getAvaliacaoByUsuario); // Público
+router.post('/avaliacao', createAvaliacao); // Próprio usuário ou admin
+router.put('/avaliacao/:id', autenticarUsuario, somenteProprioUsuarioOuAdmin, updateAvaliacao); // Próprio usuário ou admin
+router.put('/avaliacao/:id/delete', autenticarUsuario, somenteProprioUsuarioOuAdmin, softDeleteAvaliacao); // Próprio usuário ou admin
 
 module.exports = router;

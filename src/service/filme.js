@@ -33,6 +33,26 @@ class FilmeService {
         }
     }
 
+    static async getFilmesByNome(nome) {
+        console.log('Executando buscarFilmesPorNome com nome:', nome);
+        try {
+            const filmes = await prisma.filme.findMany({
+                where: {
+                    nome: {
+                        contains: nome,
+                        mode: 'insensitive', // Busca sem case sensitive
+                    },
+                    status: 1
+                }
+            });
+            console.log('Filmes encontrados:', filmes);
+            return filmes;
+        } catch (error) {
+            console.error(`Erro ao buscar filmes por nome "${nome}":`, error);
+            throw error;
+        }
+    }
+
     static async createFilme(data) {
         console.log('Executando createFilme com dados:', data);
         try {
