@@ -6,7 +6,7 @@ class AvaliacaoService {
         console.log('Executando getAvaliacaoByFilme com ID do filme: ', idFilme);
         try {
             const avaliacoes = await prisma.avaliacao.findMany({
-                where: { 
+                where: {
                     idFilme,
                     status: 1
                 },
@@ -22,6 +22,27 @@ class AvaliacaoService {
             throw error;
         }
     }
+
+    // ...existing code...
+    static async getMediaAvaliacaoByFilme(idFilme) {
+        console.log('Executando getMediaAvaliacaoByFilme com ID do filme: ', idFilme);
+        try {
+            const result = await prisma.avaliacao.aggregate({
+                _avg: { nota: true },
+                where: {
+                    idFilme,
+                    status: 1
+                }
+            });
+
+            // Se não houver avaliações, retorna null ou 0
+            return result._avg.nota || 0;
+        } catch (error) {
+            console.error('Erro ao calcular média das avaliações por filme: ', error);
+            throw error;
+        }
+    }
+    // ...existing code...
 
     static async getAvaliacaoByUsuario(idUsuario) {
         console.log('Executando getAvaliacaoByUsuario com ID do usuário: ', idUsuario);
@@ -66,7 +87,7 @@ class AvaliacaoService {
         try {
             // Verifica se a avaliação existe
             const avaliacaoExistente = await prisma.avaliacao.findUnique({
-                where: { 
+                where: {
                     idUsuario,
                     id,
                 },

@@ -15,6 +15,19 @@ const getAvaliacaoByFilme = async (req, res, next) => {
     }
 };
 
+const getMediaAvaliacaoByFilme = async (req, res, next) => {
+    console.log('GET /api/avaliacao/media - Iniciando busca da média de avaliações por filme');
+    try {
+        const { id } = IdSchema.parse({ id: Number(req.params.id) });
+        const mediaAvaliacao = await AvaliacaoService.getMediaAvaliacaoByFilme(id);
+        console.log(`GET /api/avaliacao/media - Média de avaliações encontrada para o filme com ID ${id}:`, mediaAvaliacao);
+        res.json({ mediaAvaliacao });
+    } catch (error) {
+        console.error('GET /api/avaliacao/media - Erro ao buscar média de avaliações:', error);
+        next(error); // Encaminha o erro para o middleware de erros
+    }
+};
+
 const getAvaliacaoByUsuario = async (req, res, next) => {
     console.log('GET /api/avaliacao - Iniciando busca de todas as avaliações por usuário');
     try {
@@ -99,4 +112,4 @@ const softDeleteAvaliacao = async (req, res, next) => {
     }
 };
 
-module.exports = { getAvaliacaoByFilme, getAvaliacaoByUsuario, createAvaliacao, updateAvaliacao, softDeleteAvaliacao };
+module.exports = { getAvaliacaoByFilme, getMediaAvaliacaoByFilme, getAvaliacaoByUsuario, createAvaliacao, updateAvaliacao, softDeleteAvaliacao };
