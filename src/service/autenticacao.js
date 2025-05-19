@@ -40,7 +40,7 @@ class AutenticacaoService {
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 
         // Retorna o token e os dados do usuário (sem a senha)
-        return { token };
+        return { token, usuario: payload };
     }
 }
 
