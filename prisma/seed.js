@@ -41,7 +41,7 @@ async function main() {
       nome: 'Administrador',
       email: 'admin.iftm@gmail.com',
       senha: senhaAdmin,
-      data_nascimento: '1990-01-01',
+      data_nascimento: new Date('1990-01-01'),
       status: 1,
       apelido: 'admin',
       tipo_usuario: 'admin'
@@ -53,7 +53,7 @@ async function main() {
       nome: 'Usuário Comum',
       email: 'usuario@email.com',
       senha: senhaComum,
-      data_nascimento: '2000-01-01',
+      data_nascimento: new Date('2000-01-01'),
       status: 1,
       apelido: 'usuariocomum',
       tipo_usuario: 'comum'
