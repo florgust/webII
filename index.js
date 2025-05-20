@@ -12,8 +12,11 @@ const generoRouter = require('./src/routes/genero');
 const GeneroFilmeRouter = require('./src/routes/genero_filme');
 const autenticacaoRouter = require('./src/routes/autenticacao');
 
+const cors = require('cors');
+
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/', usuarioRouter);
@@ -25,6 +28,6 @@ app.use('/', autenticacaoRouter);
 
 app.use(errorHandler)
 // Iniciar o servidor
-app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000');
+app.listen(3030, () => {
+    console.log('Servidor rodando na porta 3030');
 });

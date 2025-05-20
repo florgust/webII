@@ -1,6 +1,7 @@
 const express = require('express');
 const {
     getAvaliacaoByFilme,
+    getMediaAvaliacaoByFilme,
     getAvaliacaoByUsuario,
     createAvaliacao,
     updateAvaliacao,
@@ -12,6 +13,7 @@ const router = express.Router();
 
 // Rotas para avaliações
 router.get('/avaliacoes/filme/:id', getAvaliacaoByFilme); // Público
+router.get('/avaliacoes/media/filme/:id', getMediaAvaliacaoByFilme); // Público
 router.get('/avaliacoes/usuario/:id', getAvaliacaoByUsuario); // Público
 router.post('/avaliacao', createAvaliacao); // Próprio usuário ou admin
 router.put('/avaliacao/:id', autenticarUsuario, somenteProprioUsuarioOuAdmin, updateAvaliacao); // Próprio usuário ou admin
