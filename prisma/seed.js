@@ -4,21 +4,41 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 async function main() {
+  // Apaga tudo na ordem correta (filhos antes dos pais)
+  await prisma.avaliacao.deleteMany();
+  await prisma.generoFilme.deleteMany();
+  await prisma.filme.deleteMany();
+  await prisma.genero.deleteMany();
+  await prisma.usuario.deleteMany();
+
   // Cria gêneros
   const acao = await prisma.genero.create({ data: { descricao: 'Ação', status: 1 } });
   const comedia = await prisma.genero.create({ data: { descricao: 'Comedia', status: 1 } });
   const drama = await prisma.genero.create({ data: { descricao: 'Drama', status: 1 } });
 
-  // Cria um filme
+  // Cria filmes
   const filme = await prisma.filme.create({
     data: {
-      nome: 'Filme Exemplo',
-      diretor: 'Diretor Exemplo',
-      anoLancamento: 2024,
-      duracao: 120,
-      produtora: 'Produtora Exemplo',
-      classificacao: 'Livre',
-      poster: 'https://exemplo.com/poster.jpg',
+      nome: 'O Senhor dos Anéis: A Sociedade do Anel',
+      diretor: 'Peter Jackson',
+      anoLancamento: 2001,
+      duracao: 178,
+      produtora: 'New Line Cinema',
+      classificacao: '12+',
+      poster: 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/b5pl6GmQmTCHmZKEBhXPN0gmoAq.jpg',
+      status: 1,
+    }
+  });
+
+  await prisma.filme.create({
+    data: {
+      nome: 'The Last Of Us',
+      diretor: 'Neil Druckmann',
+      anoLancamento: 2023,
+      duracao: 178,
+      produtora: 'HBO',
+      classificacao: '16+',
+      poster: 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/el1KQzwdIm17I3A6cYPfsVIWhfX.jpg',
       status: 1,
     }
   });
@@ -33,15 +53,15 @@ async function main() {
   });
 
   // Cria usuários (admin e comum)
-  const senhaAdmin = await bcrypt.hash('admin123', 10);
-  const senhaComum = await bcrypt.hash('usuario123', 10);
+  const senhaAdmin = await bcrypt.hash('Admin123@', 10);
+  const senhaComum = await bcrypt.hash('Usuario123@', 10);
 
-  const admin = await prisma.usuario.create({
+  await prisma.usuario.create({
     data: {
       nome: 'Administrador',
       email: 'admin.iftm@gmail.com',
       senha: senhaAdmin,
-      data_nascimento: '1990-01-01',
+      data_nascimento: new Date('1990-01-01'),
       status: 1,
       apelido: 'admin',
       tipo_usuario: 'admin'
@@ -53,7 +73,7 @@ async function main() {
       nome: 'Usuário Comum',
       email: 'usuario@email.com',
       senha: senhaComum,
-      data_nascimento: '2000-01-01',
+      data_nascimento: new Date('2000-01-01'),
       status: 1,
       apelido: 'usuariocomum',
       tipo_usuario: 'comum'
@@ -65,7 +85,7 @@ async function main() {
     data: {
       idUsuario: usuario.id,
       idFilme: filme.id,
-      nota: 8.5,
+      nota: 3,
       comentario: 'Ótimo filme!',
       status: 1
     }
