@@ -1,5 +1,6 @@
 const prisma = require('../../prisma/prismaClient');
 const NotFoundError = require('../exceptions/NotFoundError');
+const AlreadyExistsError = require('../exceptions/AlreadyExistsError');
 
 class AvaliacaoService {
     static async getAvaliacaoByFilme(idFilme) {
@@ -68,6 +69,19 @@ class AvaliacaoService {
     static async createAvaliacao(idUsuario, idFilme, data) {
         console.log('Executando createAvaliacao com dados: ', data);
         try {
+            // Verifica se já existe avaliação ativa para o mesmo usuário e filme
+            const avaliacaoExistente = await prisma.avaliacao.findFirst({
+                where: {
+                    idUsuario,
+                    idFilme,
+                    status: 1
+                }
+            });
+
+            if (avaliacaoExistente) {
+                throw new AlreadyExistsError(`Avaliação já existe para o usuário com ID ${idUsuario} e filme com ID ${idFilme}.`);
+            }
+
             const novaAvaliacao = await prisma.avaliacao.create({
                 data: {
                     idUsuario,
