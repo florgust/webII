@@ -11,12 +11,18 @@ class AvaliacaoService {
                     idFilme,
                     status: 1
                 },
+                include: {
+                    usuario: {
+                        select: { nome: true }
+                    }
+                }
             });
 
             if (avaliacoes.length === 0) {
                 throw new NotFoundError(`Nenhuma avaliação encontrada para o filme com ID ${idFilme}.`);
             }
 
+            // O retorno já terá o campo usuario: { nome: ... }
             return avaliacoes;
         } catch (error) {
             console.error('Erro ao buscar avaliações por filme: ', error);
