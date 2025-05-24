@@ -13,7 +13,7 @@ class AvaliacaoService {
                 },
                 include: {
                     usuario: {
-                        select: { nome: true }
+                        select: { id: true, nome: true }
                     }
                 }
             });
