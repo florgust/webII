@@ -23,7 +23,8 @@ const FilmeSchema = z.object({
         .max(255, { message: 'O campo "produtora" deve conter no máximo 255 caracteres.' }),
 
     classificacao: z.string()
-        .regex(/^\d{1,2}\+$/, { message: 'O campo "classificacao" deve estar no formato correto, como "12+" ou "18+".' }),
+        .regex(/^\d{1,2}\+$/, { message: 'O campo "classificacao" deve estar no formato correto, como "12+" ou "18+".' })
+        .or(z.literal("Livre"), { message: 'O campo "classificacao" deve ser "Livre" ou no formato correto, como "12+".' }),
 
     poster: z.string()
         .url({ message: 'O campo "poster" deve ser uma URL válida.' })

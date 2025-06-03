@@ -31,6 +31,8 @@ function somenteAdmin(req, res, next) {
 // Middleware para permitir o próprio usuário ou admin
 function somenteProprioUsuarioOuAdmin(req, res, next) {
     const { id } = req.params;
+    console.log(`ID do usuário na rota: ${id}`);
+    console.log(`ID do usuário autenticado: ${req.user?.id}`);
     if (
         req.user &&
         (req.user.email === 'admin.iftm@gmail.com' || req.user.id === parseInt(id))

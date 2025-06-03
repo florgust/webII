@@ -16,7 +16,7 @@ router.get('/avaliacoes/filme/:id', getAvaliacaoByFilme); // Público
 router.get('/avaliacoes/media/filme/:id', getMediaAvaliacaoByFilme); // Público
 router.get('/avaliacoes/usuario/:id', getAvaliacaoByUsuario); // Público
 router.post('/avaliacao', createAvaliacao); // Próprio usuário ou admin
-router.put('/avaliacao/:id', autenticarUsuario, somenteProprioUsuarioOuAdmin, updateAvaliacao); // Próprio usuário ou admin
-router.put('/avaliacao/:id/delete', autenticarUsuario, somenteProprioUsuarioOuAdmin, softDeleteAvaliacao); // Próprio usuário ou admin
+router.put('/avaliacao/:id', autenticarUsuario, updateAvaliacao); // Próprio usuário ou admin
+router.put('/avaliacao/:id/delete', autenticarUsuario, softDeleteAvaliacao); // Próprio usuário ou admin
 
 module.exports = router;
