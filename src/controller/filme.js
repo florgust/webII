@@ -1,6 +1,18 @@
 const { FilmeService } = require('../service/filme');
 const { FilmeSchema, FilmeUpdateSchema } = require('../validation/filmeValidation')
 
+const getFilmesDesativados = async (req, res, next) => {
+    console.log('GET /filmes - Iniciando busca de todos os filmes desativados');
+    try {
+        const filmes = await FilmeService.getFilmesDesativados();
+        console.log('GET /filmes - Filmes encontrados:', filmes);
+        res.json(filmes);
+    } catch (error) {
+        console.error('GET /filmes - Erro ao buscar filmes:', error);
+        next(error);
+    }
+};
+
 const getFilmes = async (req, res, next) => {
     console.log('GET /filmes - Iniciando busca de todos os filmes');
     try {
@@ -78,4 +90,4 @@ const softDeleteFilme = async (req, res, next) => {
         next(error);
     }
 };
-module.exports = { getFilmes, getFilmeById, getFilmesByNome, createFilme, updateFilme, softDeleteFilme };
+module.exports = { getFilmesDesativados, getFilmes, getFilmeById, getFilmesByNome, createFilme, updateFilme, softDeleteFilme };

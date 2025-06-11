@@ -2,6 +2,19 @@ const prisma = require('../../prisma/prismaClient');
 const NotFoundError = require('../exceptions/NotFoundError');
 
 class FilmeService {
+    static async getFilmesDesativados() {
+        console.log('Executando getFilmes');
+        try {
+            const filmes = await prisma.filme.findMany({
+                where: { status: 0 }
+            });
+            return filmes;
+        } catch (error) {
+            console.error('Erro ao buscar filmes:', error);
+            throw error;
+        }
+    }
+
     static async getFilmes() {
         console.log('Executando getFilmes');
         try {
