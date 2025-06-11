@@ -8,7 +8,7 @@ class UsuarioService {
         console.log('Executando getUsuarios');
         try {
             const usuarios = await prisma.usuario.findMany({
-                where: { status: 1, tipo_usuario: 'comum' },
+                where: { tipo_usuario: 'comum' },
             });
             // Remove a senha dos logs e do retorno
             const usuariosSemSenha = usuarios.map(({ senha, ...rest }) => rest);
