@@ -511,6 +511,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /avaliacoes/media/filme/{id}:
+    get:
+      tags:
+        - Avaliacoes
+      summary: Busca a média das avaliações por filme
+      description: Retorna a média de todas as avaliações ativas de um filme específico com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme a ser buscado
+          schema:
+            type: integer
+      responses:
+        200:
+          description: média de avaliações retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: integer
+        404:
+          description: média não encontrada para o filme
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /avaliacoes/usuario/{id}:
     get:
       tags:
@@ -815,6 +847,36 @@ paths:
         500:
           description: Erro interno do servidor
 
+  /genero_filme/all/{id}:
+    get:
+      tags:
+        - GeneroFilme
+      summary: Busca todas os dados da tabela genero_filme à partir de um filme
+      description: Retorna todos os dados da tabela genero_filme associados ao filme informado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do filme
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de dados retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Filme'
+        404:
+          description: Nenhum genero_filme encontrado para o gênero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
   /genero_filme/filmes/{id}:
     get:
       tags:
