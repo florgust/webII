@@ -1,6 +1,18 @@
 const { GeneroFilmeService } = require('../../service/genero_filme');
 const { IdSchema } = require("../../validation/avaliacaoValidation");
 
+
+// Retorna todas as associações genero_filme de um filme
+const getAllGeneroFilmeByFilme = async (req, res, next) => {
+    try {
+        const { id } = IdSchema.parse({ id: Number(req.params.id) });
+        const generosFilme = await GeneroFilmeService.getAllByFilme(id);
+        res.json(generosFilme);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Busca todos os filmes de um gênero específico
 const getFilmesByGenero = async (req, res, next) => {
     console.log('GET /api/genero_filme/filmes/:id - Iniciando busca de filmes por gênero');
@@ -116,6 +128,7 @@ const softDeleteGeneroFilme = async (req, res, next) => {
 };
 
 module.exports = {
+    getAllGeneroFilmeByFilme,
     createGeneroFilme,
     getFilmesByGenero,
     updateGeneroFilme,

@@ -2,6 +2,13 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class GeneroFilmeService {
+
+    static async getAllByFilme(idFilme) {
+        return prisma.generoFilme.findMany({
+            where: { idFilme }
+        });
+    }
+    
     // Busca todos os filmes de um gênero específico
     static async getFilmesByGenero(idGenero) {
         return prisma.generoFilme.findMany({

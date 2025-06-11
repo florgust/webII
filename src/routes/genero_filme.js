@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+    getAllGeneroFilmeByFilme,
     createGeneroFilme,
     getFilmesByGenero,
     updateGeneroFilme,
@@ -10,6 +11,7 @@ const { autenticarUsuario, somenteAdmin } = require('../middleware/autenticacao'
 
 const router = express.Router();
 
+router.get('/genero_filme/all/:id', getAllGeneroFilmeByFilme); // Público
 router.get('/genero_filme/filmes/:id', getFilmesByGenero); // Público
 router.get('/genero_filme/generos/:id', getGenerosByFilme); // Público
 router.post('/genero_filme', autenticarUsuario, somenteAdmin, createGeneroFilme); // Admin
