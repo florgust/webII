@@ -32,18 +32,20 @@ class AvaliacaoService {
 
     // ...existing code...
     static async getMediaAvaliacaoByFilme(idFilme) {
-        console.log('Executando getMediaAvaliacaoByFilme com ID do filme: ', idFilme);
-        try {
-            const result = await prisma.avaliacao.aggregate({
-                _avg: { nota: true },
-                where: {
-                    idFilme,
-                    status: 1
+    console.log('Executando getMediaAvaliacaoByFilme com ID do filme: ', idFilme);
+    try {
+        const result = await prisma.avaliacao.aggregate({
+            _avg: { nota: true },
+            where: {
+                idFilme,
+                status: 1,
+                usuario: {
+                    status: 1 // Só considera avaliações de usuários ativos
                 }
-            });
+            }
+        });
 
-            // Se não houver avaliações, retorna null ou 0
-            return result._avg.nota || 0;
+        return result._avg.nota || 0;
         } catch (error) {
             console.error('Erro ao calcular média das avaliações por filme: ', error);
             throw error;
