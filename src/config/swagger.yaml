@@ -429,6 +429,29 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         500:
           description: Erro interno do servidor
+  /desativados/filmes:
+    get:
+      tags:
+        - Filme
+      security:
+        - bearerAuth: []
+      summary: Busca todos os filmes desativados
+      description: Retorna uma lista de todos os filmes com status 0 (inativo)
+      responses:
+        200:
+          description: Lista de filmes desativados retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        404:
+          description: Filmes não encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Erro interno do servidor
   /filme:
     post:
       tags:
