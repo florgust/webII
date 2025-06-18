@@ -22,7 +22,7 @@ function autenticarUsuario(req, res, next) {
 
 // Middleware para permitir apenas o admin
 function somenteAdmin(req, res, next) {
-    if (req.user && req.user.email === 'admin.iftm@gmail.com' && req.user.tipo_usuario === 'admin') {
+    if (req.user && req.user.tipo_usuario === 'admin') {
         return next();
     }
     throw new ForbiddenError('Acesso negado. Somente administradores podem acessar este recurso.');
