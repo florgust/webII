@@ -25,9 +25,9 @@ const UsuarioSchema = z.object({
         }, { message: 'O usuário deve ter pelo menos 16 anos.' }),
 
     apelido: z.string()
-        .min(3, { message: 'O campo "apelido" deve ter pelo menos 3 caracteres.' })
         .max(50, { message: 'O campo "apelido" deve ter no máximo 50 caracteres.' })
-        .optional(),
+        .optional()
+        .or(z.literal('')),
 
     tipo_usuario: z.string()
         .min(3, { message: 'O campo "tipo_usuario" deve ter pelo menos 3 caracteres.' })
